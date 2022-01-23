@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>StevenLi's book List</title>
+    <link rel="stylesheet" type="text/css" href="base.css">
+</head>
+
+<body>
+    <h1>StevenLi's book list</h1>
+    <br>
+    <table border="1">
+        <tr>
+            <td style="width: 90pt;height: 240px;""><a href="%DetailedBookIntroPage%"><img
+                    src="%BookCoverLink%" alt="bookCover"></a>
+            </td>
+
+            <td style="width:100%;">
+                <a href="%DetailedBookIntroPage%">%bookname%</a>
+                <div id="book_intro" style="text-align:left;width:100%;height:max-content;">
+                    <p>
+                        %introduction%
+                    </p>
+                </div>
+                <div id="links">
+                    链接：<br>
+                    <a href="%OfficalBookLink%"><button>%OfficalBookSite%</button></a>
+                    <a href="%AltBookLink%"><button>%AltBookSite%</button></a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>

@@ -1,0 +1,11 @@
+a{
+    text-decoration:none;
+    font-size: larger;
+    color: black;
+}
+a:hover{
+    color: blue;
+}
+a::before, a::after{color: black;}
+
+img{width: max-content;height: max-content;}
