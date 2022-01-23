@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="bc9d53ac-e8d1-4ba4-84df-d3f6252995e0" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/update.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +24,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunManager" selected="Python.update">
     <configuration name="update" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -89,6 +90,8 @@
       <workItem from="1642933360385" duration="87000" />
       <workItem from="1642933449304" duration="5562000" />
       <workItem from="1642949206149" duration="12000" />
+      <workItem from="1642952524017" duration="290000" />
+      <workItem from="1642955467003" duration="744000" />
     </task>
     <servers />
   </component>
