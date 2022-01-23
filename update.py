@@ -71,37 +71,19 @@ class Worm:
         :return: None
         """
         with open("info.txt", "a+") as f:
-            f.write(json.dumps(bookinfo))
-
-
-
-class file_manager():
-    def __init__(self):
-        self.PATH = {
-            "follow": "follow.txt",
-            "base":"text/",
-        }
-
-        def read_follow():
-            with open("follow.txt", "r") as f:
-                return f.read().split("\n")
-
-        self.bookcode = read_follow()
-        if not os.path.exists(self.PATH['base']): os.mkdir(self.PATH['base'])
-        for path in self.bookcode:
-            if not os.path.exists(self.PATH['base']+path): os.mkdir(self.PATH['base']+path)
+            f.write(json.dumps(bookinfo)+"\n")
 
 class webManager():
     def update(self):
         def d(text):
             return text
         with open("info.txt", "r") as f:
-            self.info = f.read().split("\n")
+            self.info = f.read().split("\n")[:-1]
         txt = []
         for book in self.info:
             og = json.loads(book)
             text_replacement = f"""<tr>
-            <td style="width: 90pt;height: 240px;""><div class="zoom"><a href="{og["url"]}">
+            <td style="width: 180px;height: 240px;""><div class="zoom"><a href="{og["url"]}">
             <img
                     src="https:{og["image"]}" alt="bookCover"></a></div>
             </td>
@@ -123,7 +105,23 @@ class webManager():
             txt.append(text_replacement)
         with open("template/index.html", "r") as f: temp = str(f.read())
         with open("index.html", "w") as f:
-            f.write(temp.replace("replace", "<br>".join(txt)))
+            f.write(temp.replace("replace", "\n".join(txt)))
 if __name__ == '__main__':
-    # Worm().infoPage("https://book.qidian.com/info/1009480992/")
+    UpdateList = [
+        "https://book.qidian.com/info/1009480992/",
+        "https://book.qidian.com/info/1021617576/",
+        "https://book.qidian.com/info/1029006481/",
+        "https://book.qidian.com/info/1025901449/",
+        "https://book.qidian.com/info/1023867124/",
+        "https://book.qidian.com/info/1016150754/",
+        "https://book.qidian.com/info/1015525869/",
+        "https://book.qidian.com/info/1013293257/",
+        "https://book.qidian.com/info/1012284323/",
+        "https://book.qidian.com/info/1003306811/",
+        "https://book.qidian.com/info/2718601/",
+        "https://book.qidian.com/info/3681932/",
+    ]
+    """for i in UpdateList:
+        Worm().infoPage(i)
+        time.sleep(1)"""
     webManager().update()
