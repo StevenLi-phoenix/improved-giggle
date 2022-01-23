@@ -3,10 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bc9d53ac-e8d1-4ba4-84df-d3f6252995e0" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/base.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/info.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/update.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +87,8 @@
       <updated>1642929199559</updated>
       <workItem from="1642929203211" duration="219000" />
       <workItem from="1642933360385" duration="87000" />
-      <workItem from="1642933449304" duration="5371000" />
+      <workItem from="1642933449304" duration="5562000" />
+      <workItem from="1642949206149" duration="12000" />
     </task>
     <servers />
   </component>
@@ -111,7 +108,7 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/improved_giggle$update.coverage" NAME="update 覆盖结果" MODIFIED="1642939698171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/improved_giggle$update.coverage" NAME="update 覆盖结果" MODIFIED="1642939732828" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/improved_giggle$worm.coverage" NAME="worm 覆盖结果" MODIFIED="1642937071744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/worm5" />
   </component>
 </project>
