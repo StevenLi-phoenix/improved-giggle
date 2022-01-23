@@ -107,7 +107,7 @@ class webManager():
         with open("index.html", "w") as f:
             f.write(temp.replace("replace", "\n".join(txt)))
 if __name__ == '__main__':
-    UpdateList = [
+    """UpdateList = [
         "https://book.qidian.com/info/1009480992/",
         "https://book.qidian.com/info/1021617576/",
         "https://book.qidian.com/info/1029006481/",
@@ -120,8 +120,10 @@ if __name__ == '__main__':
         "https://book.qidian.com/info/1003306811/",
         "https://book.qidian.com/info/2718601/",
         "https://book.qidian.com/info/3681932/",
-    ]
+    ]"""
     """for i in UpdateList:
         Worm().infoPage(i)
         time.sleep(1)"""
+    Worm().infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/")
+    Worm().infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/")
     webManager().update()
