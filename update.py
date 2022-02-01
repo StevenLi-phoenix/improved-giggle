@@ -181,6 +181,9 @@ if __name__ == '__main__':
     worm.infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/") #全职艺术家
     worm.infoPage("https://book.qidian.com/info/1013887416/") #大佬退休之后
     worm.infoPage("https://book.qidian.com/info/1010377389/") #全能游戏设计师
-
+    worm.nameSearch("科技之全球垄断")
+    worm.nameSearch("科技图书馆")
+    worm.nameSearch("世界树的游戏")
+    worm.nameSearch("我真没想当救世主啊")
     webManager().update_from_worm(worm.ogs)
     worm.output()
