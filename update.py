@@ -1,4 +1,5 @@
-import json, atexit, random, time, os
+from curses.ascii import alt
+import json, random, time
 import requests
 from bs4 import BeautifulSoup as BS
 
@@ -37,6 +38,7 @@ class Worm:
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/4E423F",
             "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36"]
         self.decodetype = "utf-8"
+        self.ogs = []
 
     def BS(self, content):
         """
@@ -75,12 +77,14 @@ class Worm:
         # todo find alt link by searching using google.com or baidu.com
         pass
 
-    def infoPage(self, url, altsite=None):
-        """get info page through url from qidian.com
-        altsite is optimal"""
-
-        # set altsite to 404.html if alt site not avaliable
-        if altsite == None: altsite = "404.html"
+    def infoPage(self, url, altsite=None, append=True):
+        """
+        get info from qidian.com substract from standard header
+        :param url: book url(qidian.com)
+        :return: return bookinfo if append is False else add info to self.ogs list
+        """
+        if altsite==None:
+            altsite="404.html"
         content = self.BS(self.open_url(url))
         og = {
             "url": url,
@@ -99,9 +103,10 @@ class Worm:
             "novel:latest_chapter_url": content.find("meta", {"property": "og:novel:latest_chapter_url"})["content"],
             "altsite": altsite,
         }
-        # change image to 180*240 format by changing the image url to a smaller scale
-        if og["image"].endswith("300"): og["image"] = og["image"][:-3] + "180"
-        self.append_info_data(og)
+        if append:
+            self.ogs.append(og)
+        else:
+            return og
 
     def append_info_data(self, bookinfo):
         """
@@ -109,21 +114,36 @@ class Worm:
         :param bookinfo: og data
         :return: None
         """
-        # todo check the info.txt and optimized to none repeated
-        with open("info.txt", "a+") as f:
-            f.write(json.dumps(bookinfo) + "\n")
+        with open("info.json", "r") as f:
+            data = json.loads(f.read())
+        data.append(bookinfo)
+        with open("info.json", "w") as f:
+            f.write(json.dumps(data))
+
+    def replace_info_data(self, bookinfos):
+        """
+        replace content in info.json
+        :param bookinfo: og datas
+        :return: None
+        """
+        with open("info.json", "w") as f:
+            f.write(json.dumps(bookinfos))
+    def output(self):
+        assert len(self.ogs) > 0
+        self.replace_info_data(self.ogs)
 
 
 class webManager():
-    def update(self):
-        def d(text):
-            return text
-
-        with open("info.txt", "r") as f:
-            self.info = f.read().split("\n")[:-1]
+    def setSelfInfo(self):
+         with open("info.json", "r") as f:
+            self.info = json.loads(f.read())
+    def update(self, mod="from local", ogs=None):
+        if mod == "from local":
+            self.setSelfInfo()
+        elif mod == "from worm":
+            self.info = ogs
         txt = []
-        for book in self.info:
-            og = json.loads(book)
+        for og in self.info:
             text_replacement = f"""<tr>
             <td style="width: 180px;height: 240px;""><div class="zoom"><a href="{og["url"]}">
             <img
@@ -131,10 +151,10 @@ class webManager():
             </td>
 
             <td style="width:100%;">
-                <a href="{og["url"]}">{d(og["novel:book_name"])}</a>
+                <a href="{og["url"]}">{og["novel:book_name"]}</a>
                 <div id="book_intro" style="text-align:left;width:100%;height:max-content;">
                     <p>
-                        {d(og["description"])}
+                        {og["description"]}
                     </p>
                 </div>
                 <div id="links">
@@ -148,29 +168,23 @@ class webManager():
         with open("template/index.html", "r") as f: temp = str(f.read())
         with open("index.html", "w") as f:
             f.write(temp.replace("replace", "\n".join(txt)))
-
-
+    def update_from_worm(self, ogs):
+        self.update(mod="from worm", ogs=ogs)
 if __name__ == '__main__':
-    # todo check the urls for no repeat reasons
-    # todo multithreading gather information
-    """UpdateList = [
-        "https://book.qidian.com/info/1009480992/",
-        "https://book.qidian.com/info/1021617576/",
-        "https://book.qidian.com/info/1029006481/",
-        "https://book.qidian.com/info/1025901449/",
-        "https://book.qidian.com/info/1023867124/",
-        "https://book.qidian.com/info/1016150754/",
-        "https://book.qidian.com/info/1015525869/",
-        "https://book.qidian.com/info/1013293257/",
-        "https://book.qidian.com/info/1012284323/",
-        "https://book.qidian.com/info/1003306811/",
-        "https://book.qidian.com/info/2718601/",
-        "https://book.qidian.com/info/3681932/",
-    ]"""
-    """for i in UpdateList:
-        Worm().infoPage(i)
-        time.sleep(1)"""
-    Worm().infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/")
-    Worm().infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/")
-    # todo seperate the update action and gather information action using automous mission to update?
-    webManager().update()
+    worm = Worm()
+    worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
+    worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
+    worm.infoPage("https://book.qidian.com/info/1029006481/")
+    worm.infoPage("https://book.qidian.com/info/1025901449/")
+    worm.infoPage("https://book.qidian.com/info/1023867124/")
+    worm.infoPage("https://book.qidian.com/info/1016150754/")
+    worm.infoPage("https://book.qidian.com/info/1015525869/")
+    worm.infoPage("https://book.qidian.com/info/1013293257/")
+    worm.infoPage("https://book.qidian.com/info/1012284323/")
+    worm.infoPage("https://book.qidian.com/info/1003306811/", altsite="https://www.biqugee.com/book/3600/") #放开那个女巫
+    worm.infoPage("https://book.qidian.com/info/2718601/")
+    worm.infoPage("https://book.qidian.com/info/3681932/", altsite="https://www.biqugee.com/book/15409/") #名侦探世界里的巫师
+    worm.infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/") #二进制亡者列车
+    worm.infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/") #全职艺术家
+    webManager().update_from_worm(worm.ogs)
+    worm.output()
