@@ -77,7 +77,7 @@ class Worm:
             "novel:latest_chapter_url": content.find("meta", {"property": "og:novel:latest_chapter_url"})["content"],
         }
         if og["image"].endswith("300"):og["image"] = og["image"][:-3]+"180"
-        if altsite==None and autoSearchAltsite == True:
+        if altsite== "404.html" and autoSearchAltsite:
             altsite = self.autoSearchAltsite(og["title"])
         og["altsite"]=altsite
         if append:
