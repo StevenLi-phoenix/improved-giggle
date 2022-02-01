@@ -1,5 +1,6 @@
 from curses.ascii import alt
 import json, random, time
+from re import S
 import requests
 from bs4 import BeautifulSoup as BS
 
@@ -104,6 +105,21 @@ class Worm:
         """
         with open("info.json", "w") as f:
             f.write(json.dumps(bookinfos))
+    def nameSearch(self, name, autoPost = True):
+        base = "https:"
+        request_url = f"https://www.qidian.com/soushu/{name}.html"
+        respon = self.BS(self.open_url(request_url))
+        try:
+            infoPage = base + respon.find("li",{"class":"res-book-item"}).find("h2",{"class":"book-info-title"}).a["href"]
+        except TypeError as e:
+            with open("log/search.html", "w") as f:
+                f.write(respon)
+            print("Search None save html file to log/search.html")
+            return -1
+        if autoPost:
+            self.infoPage(infoPage, autoSearchAltsite=True)
+        else:
+            return infoPage
 
     def output(self):
         assert len(self.ogs) > 0
@@ -163,5 +179,8 @@ if __name__ == '__main__':
     worm.infoPage("https://book.qidian.com/info/3681932/", altsite="https://www.biqugee.com/book/15409/") #名侦探世界里的巫师
     worm.infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/") #二进制亡者列车
     worm.infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/") #全职艺术家
+    worm.infoPage("https://book.qidian.com/info/1013887416/") #大佬退休之后
+    worm.infoPage("https://book.qidian.com/info/1010377389/") #全能游戏设计师
+
     webManager().update_from_worm(worm.ogs)
     worm.output()
