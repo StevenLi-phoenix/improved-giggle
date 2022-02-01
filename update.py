@@ -199,5 +199,6 @@ if __name__ == '__main__':
         worm.nameSearch("我真没想当救世主啊")
         worm.nameSearch("别叫我歌神")
     worm.nameSearch("柯学验尸官")
+    worm.nameSearch("暗影熊提伯斯的位面之旅")
     webManager().update_from_local_append(worm.ogs)
     worm.output()
