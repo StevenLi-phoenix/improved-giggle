@@ -138,7 +138,9 @@ class webManager():
             self.setSelfInfo()
         elif mod == "from local append":
             self.setSelfInfo()
-            self.info.extend(ogs)
+            for og in ogs:
+                if og not in self.info:
+                    self.info.append(og)
         elif mod == "from worm":
             self.info = ogs
         txt = []
@@ -174,27 +176,28 @@ class webManager():
 
 if __name__ == '__main__':
     worm = Worm()
-    """worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
-    worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
-    worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
-    worm.infoPage("https://book.qidian.com/info/1025901449/", altsite="https://www.biqugee.com/book/42560/") #我的治愈系游戏
-    worm.infoPage("https://book.qidian.com/info/1023867124/", altsite="https://www.biqugee.com/book/39312/") #我家老婆来自一千年前
-    worm.infoPage("https://book.qidian.com/info/1016150754/", altsite="https://www.biqugee.com/book/30784/") #亏成首富从游戏开始
-    worm.infoPage("https://book.qidian.com/info/1015525869/", altsite="https://www.biqugee.com/book/30809/") #变成血族是什么体验
-    worm.infoPage("https://book.qidian.com/info/1013293257/", altsite="https://www.biqugee.com/book/25454/") #舌尖上的霍格沃茨
-    worm.infoPage("https://book.qidian.com/info/1012284323/", altsite="https://www.biqugee.com/book/22980/") #我有一座冒险屋
-    worm.infoPage("https://book.qidian.com/info/1003306811/", altsite="https://www.biqugee.com/book/3600/") #放开那个女巫
-    worm.infoPage("https://book.qidian.com/info/2718601/", altsite="https://www.biqugee.com/book/1876/") #进化的四十六亿重奏
-    worm.infoPage("https://book.qidian.com/info/3681932/", altsite="https://www.biqugee.com/book/15409/") #名侦探世界里的巫师
-    worm.infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/") #二进制亡者列车
-    worm.infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/") #全职艺术家
-    worm.infoPage("https://book.qidian.com/info/1013887416/") #大佬退休之后
-    worm.infoPage("https://book.qidian.com/info/1010377389/") #全能游戏设计师
-    worm.nameSearch("科技之全球垄断")
-    worm.nameSearch("科技图书馆")
-    worm.nameSearch("世界树的游戏")
-    worm.nameSearch("我真没想当救世主啊")
-    worm.nameSearch("别叫我歌神")"""
+    if False:
+        worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
+        worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
+        worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
+        worm.infoPage("https://book.qidian.com/info/1025901449/", altsite="https://www.biqugee.com/book/42560/") #我的治愈系游戏
+        worm.infoPage("https://book.qidian.com/info/1023867124/", altsite="https://www.biqugee.com/book/39312/") #我家老婆来自一千年前
+        worm.infoPage("https://book.qidian.com/info/1016150754/", altsite="https://www.biqugee.com/book/30784/") #亏成首富从游戏开始
+        worm.infoPage("https://book.qidian.com/info/1015525869/", altsite="https://www.biqugee.com/book/30809/") #变成血族是什么体验
+        worm.infoPage("https://book.qidian.com/info/1013293257/", altsite="https://www.biqugee.com/book/25454/") #舌尖上的霍格沃茨
+        worm.infoPage("https://book.qidian.com/info/1012284323/", altsite="https://www.biqugee.com/book/22980/") #我有一座冒险屋
+        worm.infoPage("https://book.qidian.com/info/1003306811/", altsite="https://www.biqugee.com/book/3600/") #放开那个女巫
+        worm.infoPage("https://book.qidian.com/info/2718601/", altsite="https://www.biqugee.com/book/1876/") #进化的四十六亿重奏
+        worm.infoPage("https://book.qidian.com/info/3681932/", altsite="https://www.biqugee.com/book/15409/") #名侦探世界里的巫师
+        worm.infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/") #二进制亡者列车
+        worm.infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/") #全职艺术家
+        worm.infoPage("https://book.qidian.com/info/1013887416/") #大佬退休之后
+        worm.infoPage("https://book.qidian.com/info/1010377389/") #全能游戏设计师
+        worm.nameSearch("科技之全球垄断")
+        worm.nameSearch("科技图书馆")
+        worm.nameSearch("世界树的游戏")
+        worm.nameSearch("我真没想当救世主啊")
+        worm.nameSearch("别叫我歌神")
     worm.nameSearch("柯学验尸官")
     webManager().update_from_local_append(worm.ogs)
     worm.output()
