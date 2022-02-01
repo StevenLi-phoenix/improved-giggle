@@ -121,9 +121,12 @@ class Worm:
         else:
             return infoPage
 
-    def output(self):
+    def output(self, mode = "replace"):
         assert len(self.ogs) > 0
-        self.replace_info_data(self.ogs)
+        if mode == "replace":
+            self.replace_info_data(self.ogs)
+        elif mode == "append":
+            self.append_info_data(self.ogs)
 
 
 class webManager():
@@ -133,6 +136,9 @@ class webManager():
     def update(self, mod="from local", ogs=None):
         if mod == "from local":
             self.setSelfInfo()
+        elif mod == "from local append":
+            self.setSelfInfo()
+            self.info.extend(ogs)
         elif mod == "from worm":
             self.info = ogs
         txt = []
@@ -163,9 +169,12 @@ class webManager():
             f.write(temp.replace("replace", "\n".join(txt)))
     def update_from_worm(self, ogs):
         self.update(mod="from worm", ogs=ogs)
+    def update_from_local_append(self, ogs):
+        self.update(mod="from local append", ogs=ogs)
+
 if __name__ == '__main__':
     worm = Worm()
-    worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
+    """worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
     worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
     worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
     worm.infoPage("https://book.qidian.com/info/1025901449/", altsite="https://www.biqugee.com/book/42560/") #我的治愈系游戏
@@ -185,5 +194,7 @@ if __name__ == '__main__':
     worm.nameSearch("科技图书馆")
     worm.nameSearch("世界树的游戏")
     worm.nameSearch("我真没想当救世主啊")
-    webManager().update_from_worm(worm.ogs)
+    worm.nameSearch("别叫我歌神")"""
+    worm.nameSearch("柯学验尸官")
+    webManager().update_from_local_append(worm.ogs)
     worm.output()
