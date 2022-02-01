@@ -1,6 +1,4 @@
-from curses.ascii import alt
 import json, random, time
-from re import S
 import requests
 from bs4 import BeautifulSoup as BS
 
@@ -93,9 +91,10 @@ class Worm:
         """
         with open("info.json", "r") as f:
             data = json.loads(f.read())
-        data.append(bookinfo)
-        with open("info.json", "w") as f:
-            f.write(json.dumps(data))
+        if bookinfo not in data:
+            data.append(bookinfo)
+            with open("info.json", "w") as f:
+                f.write(json.dumps(data))
 
     def replace_info_data(self, bookinfos):
         """
@@ -121,12 +120,13 @@ class Worm:
         else:
             return infoPage
 
-    def output(self, mode = "replace"):
+    def output(self, append=False):
         assert len(self.ogs) > 0
-        if mode == "replace":
+        if append:
             self.replace_info_data(self.ogs)
-        elif mode == "append":
-            self.append_info_data(self.ogs)
+        else:
+            for og in self.ogs:
+                self.append_info_data(og)
 
 
 class webManager():
@@ -198,7 +198,9 @@ if __name__ == '__main__':
         worm.nameSearch("世界树的游戏")
         worm.nameSearch("我真没想当救世主啊")
         worm.nameSearch("别叫我歌神")
-    worm.nameSearch("柯学验尸官")
-    worm.nameSearch("暗影熊提伯斯的位面之旅")
+        worm.nameSearch("柯学验尸官")
+        worm.nameSearch("暗影熊提伯斯的位面之旅")
+    worm.nameSearch("真千金她是全能大佬")
+    worm.nameSearch("女帝直播攻略")
     webManager().update_from_local_append(worm.ogs)
-    worm.output()
+    worm.output(append=True)
