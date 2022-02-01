@@ -32,24 +32,32 @@ class Worm:
     def open_url(self, url, max_retry_time=10):
         try: respon = requests.get(url=url, headers=self.header())
         except Exception as e:
-            time.sleep(60)
             if max_retry_time >= 0:
+                time.sleep(5)
                 respon = self.open_url(url, max_retry_time - 1)
             else:
-                raise ConnectionRefusedError("Retried too many times!!! Server refuse connection.")
+                raise ConnectionRefusedError(f"Retried too many times!!! Server refuse connection.\n{e}")
         return respon.content.decode()
 
     def main(self):
         pass
 
-    def infoPage(self, url, altsite=None, append=True):
+    def autoSearchAltsite(self, novelName):
+        base = "https://www.biqugee.com"
+        request_url = f"https://www.biqugee.com/search.php?q={novelName}"
+        respon = self.open_url(request_url)
+        try:
+            altsite = base + self.BS(respon).find("a",{"cpos":"title","class":"result-game-item-title-link"})["href"]
+        except TypeError:
+            altsite = "autoSearchFailed"
+        return altsite
+    
+    def infoPage(self, url, altsite="404.html", append=True, autoSearchAltsite=True):
         """
         get info from qidian.com substract from standard header
         :param url: book url(qidian.com)
         :return: return bookinfo if append is False else add info to self.ogs list
         """
-        if altsite==None:
-            altsite="404.html"
         content = self.BS(self.open_url(url))
         og = {
             "url":url,
@@ -66,8 +74,10 @@ class Worm:
             "novel:update_time": content.find("meta", {"property": "og:novel:update_time"})["content"],
             "novel:latest_chapter_name": content.find("meta", {"property": "og:novel:latest_chapter_name"})["content"],
             "novel:latest_chapter_url": content.find("meta", {"property": "og:novel:latest_chapter_url"})["content"],
-            "altsite":altsite,
         }
+        if altsite==None and autoSearchAltsite == True:
+            altsite = self.autoSearchAltsite(og["title"])
+        og["altsite"]=altsite
         if append:
             self.ogs.append(og)
         else:
@@ -93,6 +103,7 @@ class Worm:
         """
         with open("info.json", "w") as f:
             f.write(json.dumps(bookinfos))
+
     def output(self):
         assert len(self.ogs) > 0
         self.replace_info_data(self.ogs)
@@ -139,15 +150,15 @@ if __name__ == '__main__':
     worm = Worm()
     worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
     worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
-    worm.infoPage("https://book.qidian.com/info/1029006481/")
-    worm.infoPage("https://book.qidian.com/info/1025901449/")
-    worm.infoPage("https://book.qidian.com/info/1023867124/")
-    worm.infoPage("https://book.qidian.com/info/1016150754/")
-    worm.infoPage("https://book.qidian.com/info/1015525869/")
-    worm.infoPage("https://book.qidian.com/info/1013293257/")
-    worm.infoPage("https://book.qidian.com/info/1012284323/")
+    worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
+    worm.infoPage("https://book.qidian.com/info/1025901449/", altsite="https://www.biqugee.com/book/42560/") #我的治愈系游戏
+    worm.infoPage("https://book.qidian.com/info/1023867124/", altsite="https://www.biqugee.com/book/39312/") #我家老婆来自一千年前
+    worm.infoPage("https://book.qidian.com/info/1016150754/", altsite="https://www.biqugee.com/book/30784/") #亏成首富从游戏开始
+    worm.infoPage("https://book.qidian.com/info/1015525869/", altsite="https://www.biqugee.com/book/30809/") #变成血族是什么体验
+    worm.infoPage("https://book.qidian.com/info/1013293257/", altsite="https://www.biqugee.com/book/25454/") #舌尖上的霍格沃茨
+    worm.infoPage("https://book.qidian.com/info/1012284323/", altsite="https://www.biqugee.com/book/22980/") #我有一座冒险屋
     worm.infoPage("https://book.qidian.com/info/1003306811/", altsite="https://www.biqugee.com/book/3600/") #放开那个女巫
-    worm.infoPage("https://book.qidian.com/info/2718601/")
+    worm.infoPage("https://book.qidian.com/info/2718601/", altsite="https://www.biqugee.com/book/1876/") #进化的四十六亿重奏
     worm.infoPage("https://book.qidian.com/info/3681932/", altsite="https://www.biqugee.com/book/15409/") #名侦探世界里的巫师
     worm.infoPage("https://book.qidian.com/info/1025263752/", altsite="https://www.biqugee.com/book/41199/") #二进制亡者列车
     worm.infoPage("https://book.qidian.com/info/1022282526/", altsite="https://www.biqugee.com/book/37421/") #全职艺术家
