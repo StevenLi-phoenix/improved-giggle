@@ -176,7 +176,7 @@ class webManager():
 
 if __name__ == '__main__':
     worm = Worm()
-    if False:
+    if True:
         worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
         worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
         worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
