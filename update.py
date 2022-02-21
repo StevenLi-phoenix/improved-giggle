@@ -38,8 +38,6 @@ class Worm:
                 raise ConnectionRefusedError(f"Retried too many times!!! Server refuse connection.\n{e}")
         return respon.content.decode()
 
-    def main(self):
-        pass
 
     def autoSearchAltsite(self, novelName):
         base = "https://www.biqugee.com"
@@ -104,6 +102,8 @@ class Worm:
         """
         with open("info.json", "w") as f:
             f.write(json.dumps(bookinfos))
+
+            
     def nameSearch(self, name, autoPost = True):
         base = "https:"
         request_url = f"https://www.qidian.com/soushu/{name}.html"
