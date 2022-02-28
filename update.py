@@ -1,4 +1,5 @@
 import json, random, time
+from re import S
 import requests
 from bs4 import BeautifulSoup as BS
 
@@ -40,7 +41,7 @@ class Worm:
                 raise ConnectionRefusedError(f"Retried too many times!!! Server refuse connection.\n{e}")
         return respon.content.decode()
 
-
+# ________________________________________________________________________________________________________________________________
     def autoSearchAltsite(self, novelName):
         base = "https://www.biqugee.com"
         request_url = f"https://www.biqugee.com/search.php?q={novelName}"
@@ -132,9 +133,61 @@ class Worm:
                 self.append_info_data(og)
         else:
             self.replace_info_data(self.ogs)
+    
+    def startsearch(self, novelName: str) -> str:
+        # future features
+        return altsitessearchingmethods().startsearch(novelName)
+
+class altsitessearchingmethods():
+    # future features
+    def __init__(self):
+        self.methods = list(json.load(open("altsitessearchingmethods.json")))
+        self.open_url = worm.open_url
+        self.BS = worm.BS
+
+    def constructMethod(self, base, request_url, label, attribute, href, autoAdd = True):
+        method = {}
+        method["base"] = base
+        method["request_url"] = request_url
+        method["label"] = label
+        method["attribute"] = attribute
+        method["href"] = href
+        if autoAdd:
+            self.addmethod(method)
+        else:
+            return method
+
+    def startsearch(self, novelName):
+        altsite = "autoSearchFailed"
+        for method in self.methods:
+            respon = self.search(novelName, method)
+            if respon is not -1:
+                return respon
+        return altsite
+
+    def search(self,novelName, method):
+        request_url = method["request_url"].replace(r"{NovelName}", novelName)
+        respon = self.open_url(request_url)
+        try:
+            altsite = method["base"] + self.BS(respon).find(method["label"],method["attribute"])[method["href"]]
+        except TypeError:
+            return -1
+        return altsite
+    
+    def addmethod(self, method):
+        f = list(json.load(open("altsitessearchingmethods.json", "r")))
+        print(f"Method {method} added.")
+        if method not in f:
+            print(f"Add method {method}")
+            f.append(method)
+            json.dump(f, open("altsitessearchingmethods.json", "w"))
+    
+    def constuctAltsiteSearchingMethods(self):
+        self.constructMethod(base = r"https://www.biqugee.com", request_url = r"https://www.biqugee.com/search.php?q={NovelName}", label="a", attribute = {"cpos":"title","class":"result-game-item-title-link"}, href = "href")
+
             
 
-class webManager():
+class webManager:
     def setSelfInfo(self):
          with open("info.json", "r") as f:
             self.info = json.loads(f.read())
@@ -177,11 +230,16 @@ class webManager():
     def update_from_worm(self, ogs):
         self.update(mod="from worm", ogs=ogs)
     def update_from_local_append(self, ogs):
-        self.update(mod="from local append", ogs=ogs)
+        self.update(mod="from local append", ogs=ogs)   
+
+class subpages:
+    def __init__(self):
+        self.ogs = list(json.load(open("info.json", "w")))
+        print(self.ogs)
 
 if __name__ == '__main__':
     worm = Worm()
-    if True:
+    if False:
         worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
         worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
         worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
@@ -209,5 +267,8 @@ if __name__ == '__main__':
         worm.nameSearch("女帝直播攻略")
         worm.nameSearch("次元法典")
         worm.nameSearch("万界点名册")
-    webManager().update_from_local_append(worm.ogs)
-    worm.output(append=True)
+        worm.nameSearch("我绑架了时间线")
+        worm.nameSearch("手术直播间")
+        webManager().update_from_local_append(worm.ogs)
+        worm.output(append=True)
+    print(worm.startsearch("手术直播间"))
