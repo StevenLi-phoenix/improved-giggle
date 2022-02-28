@@ -48,6 +48,7 @@ class Worm:
         try:
             altsite = base + self.BS(respon).find("a",{"cpos":"title","class":"result-game-item-title-link"})["href"]
         except TypeError:
+            print("AutoSearchFailed retry another sites")
             altsite = "autoSearchFailed"
         return altsite
     
