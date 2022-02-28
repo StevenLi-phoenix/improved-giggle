@@ -123,11 +123,11 @@ class Worm:
     def output(self, append=False):
         assert len(self.ogs) > 0
         if append:
-            self.replace_info_data(self.ogs)
-        else:
             for og in self.ogs:
                 self.append_info_data(og)
-
+        else:
+            self.replace_info_data(self.ogs)
+            
 
 class webManager():
     def setSelfInfo(self):
@@ -202,6 +202,7 @@ if __name__ == '__main__':
         worm.nameSearch("暗影熊提伯斯的位面之旅")
         worm.nameSearch("真千金她是全能大佬")
         worm.nameSearch("女帝直播攻略")
-    worm.nameSearch("次元法典")
+        worm.nameSearch("次元法典")
+    worm.nameSearch("万界点名册")
     webManager().update_from_local_append(worm.ogs)
     worm.output(append=True)
