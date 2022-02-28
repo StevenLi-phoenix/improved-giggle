@@ -269,6 +269,5 @@ if __name__ == '__main__':
         worm.nameSearch("万界点名册")
         worm.nameSearch("我绑架了时间线")
         worm.nameSearch("手术直播间")
-        webManager().update_from_local_append(worm.ogs)
-        worm.output(append=True)
-    print(worm.startsearch("手术直播间"))
+    webManager().update_from_local_append(worm.ogs)
+    worm.output(append=True)
