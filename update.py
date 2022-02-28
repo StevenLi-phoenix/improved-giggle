@@ -29,7 +29,9 @@ class Worm:
         return headers
 
     def open_url(self, url, max_retry_time=10):
-        try: respon = requests.get(url=url, headers=self.header())
+        try: 
+            respon = requests.get(url=url, headers=self.header())
+            if respon.content is None: raise Exception(f"respon content is None max_retry_time:{max_retry_time}")
         except Exception as e:
             if max_retry_time >= 0:
                 time.sleep(5)
@@ -105,14 +107,16 @@ class Worm:
 
             
     def nameSearch(self, name, autoPost = True):
+        print(f"Start Name search {name}")
         base = "https:"
         request_url = f"https://www.qidian.com/soushu/{name}.html"
         respon = self.BS(self.open_url(request_url))
         try:
             infoPage = base + respon.find("li",{"class":"res-book-item"}).find("h2",{"class":"book-info-title"}).a["href"]
-        except TypeError as e:
+        except (TypeError, AttributeError) as e:
             with open("log/search.html", "w") as f:
                 f.write(respon)
+            print(e)
             print("Search None save html file to log/search.html")
             return -1
         if autoPost:
@@ -203,6 +207,6 @@ if __name__ == '__main__':
         worm.nameSearch("真千金她是全能大佬")
         worm.nameSearch("女帝直播攻略")
         worm.nameSearch("次元法典")
-    worm.nameSearch("万界点名册")
+        worm.nameSearch("万界点名册")
     webManager().update_from_local_append(worm.ogs)
     worm.output(append=True)
