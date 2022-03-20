@@ -1,7 +1,10 @@
 import json, random, time
-from re import S
+from tabnanny import check
+from re import S, search
+from tokenize import String
 import requests
 from bs4 import BeautifulSoup as BS
+from sklearn.feature_selection import SelectKBest
 
 
 
@@ -29,31 +32,60 @@ class Worm:
         }
         return headers
 
-    def open_url(self, url, max_retry_time=10):
+    def handle_request(self, url, max_retry_time=10):
         try: 
-            respon = requests.get(url=url, headers=self.header())
+            respon = requests.get(url=url, headers=self.header(), timeout=1)
             if respon.content is None: raise Exception(f"respon content is None max_retry_time:{max_retry_time}")
         except Exception as e:
             if max_retry_time >= 0:
-                time.sleep(5)
-                respon = self.open_url(url, max_retry_time - 1)
+                time.sleep(1)
+                respon = self.handle_request(url, max_retry_time - 1)
             else:
                 raise ConnectionRefusedError(f"Retried too many times!!! Server refuse connection.\n{e}")
-        return respon.content.decode()
+        return respon
+    def open_url(self, url, max_retry_time=10):
+        return self.handle_request(url, max_retry_time).content.decode()
 
 # ________________________________________________________________________________________________________________________________
     def autoSearchAltsite(self, novelName):
+        altsite = self.searchMethod1(novelName)
+        if altsite!="-1": return altsite
+        altsite = self.searchMethod2(novelName)
+        if altsite!="-1": return altsite
+        print("Alt search failed")
+        return "autoSearchFailed"
+        
+    def searchMethod1(self, novelName):
+        print("Altsit 1")
+        altsite = "-1"
         base = "https://www.biqugee.com"
         request_url = f"https://www.biqugee.com/search.php?q={novelName}"
         respon = self.open_url(request_url)
         try:
             altsite = base + self.BS(respon).find("a",{"cpos":"title","class":"result-game-item-title-link"})["href"]
+            return altsite
         except TypeError:
-            print("AutoSearchFailed retry another sites")
-            altsite = "autoSearchFailed"
-        return altsite
+            return altsite
+
+    def searchMethod2(self, novelName):
+        print("Altsit 2")
+        altsite = "-1"
+        base = "https://www.baidu.com"
+        request_url = f"https://www.baidu.com/s?wd={novelName}"
+        respon = self.open_url(request_url)
+        try:
+            result = self.BS(respon).find_all("div", attrs={"class":"result-op c-container xpath-log new-pmd"})
+            for re in result:
+                if re["mu"] is not "null":
+                    altsite = re["mu"]
+                    break
+            return altsite
+        except Exception as e:
+            return altsite
+# ________________________________________________________________________________________________________________________________
     
     def infoPage(self, url, altsite="404.html", append=True, autoSearchAltsite=True):
+        print(f"Start infoPage {url}")
         """
         get info from qidian.com substract from standard header
         :param url: book url(qidian.com)
@@ -106,7 +138,6 @@ class Worm:
         """
         with open("info.json", "w") as f:
             f.write(json.dumps(bookinfos))
-
             
     def nameSearch(self, name, autoPost = True):
         print(f"Start Name search {name}")
@@ -117,7 +148,7 @@ class Worm:
             infoPage = base + respon.find("li",{"class":"res-book-item"}).find("h2",{"class":"book-info-title"}).a["href"]
         except (TypeError, AttributeError) as e:
             with open("log/search.html", "w") as f:
-                f.write(respon)
+                f.write(str(respon))
             print(e)
             print("Search None save html file to log/search.html")
             return -1
@@ -134,58 +165,6 @@ class Worm:
         else:
             self.replace_info_data(self.ogs)
     
-    def startsearch(self, novelName: str) -> str:
-        # future features
-        return altsitessearchingmethods().startsearch(novelName)
-
-class altsitessearchingmethods():
-    # future features
-    def __init__(self):
-        self.methods = list(json.load(open("altsitessearchingmethods.json")))
-        self.open_url = worm.open_url
-        self.BS = worm.BS
-
-    def constructMethod(self, base, request_url, label, attribute, href, autoAdd = True):
-        method = {}
-        method["base"] = base
-        method["request_url"] = request_url
-        method["label"] = label
-        method["attribute"] = attribute
-        method["href"] = href
-        if autoAdd:
-            self.addmethod(method)
-        else:
-            return method
-
-    def startsearch(self, novelName):
-        altsite = "autoSearchFailed"
-        for method in self.methods:
-            respon = self.search(novelName, method)
-            if respon is not -1:
-                return respon
-        return altsite
-
-    def search(self,novelName, method):
-        request_url = method["request_url"].replace(r"{NovelName}", novelName)
-        respon = self.open_url(request_url)
-        try:
-            altsite = method["base"] + self.BS(respon).find(method["label"],method["attribute"])[method["href"]]
-        except TypeError:
-            return -1
-        return altsite
-    
-    def addmethod(self, method):
-        f = list(json.load(open("altsitessearchingmethods.json", "r")))
-        print(f"Method {method} added.")
-        if method not in f:
-            print(f"Add method {method}")
-            f.append(method)
-            json.dump(f, open("altsitessearchingmethods.json", "w"))
-    
-    def constuctAltsiteSearchingMethods(self):
-        self.constructMethod(base = r"https://www.biqugee.com", request_url = r"https://www.biqugee.com/search.php?q={NovelName}", label="a", attribute = {"cpos":"title","class":"result-game-item-title-link"}, href = "href")
-
-            
 
 class webManager:
     def setSelfInfo(self):
@@ -239,7 +218,7 @@ class subpages:
 
 if __name__ == '__main__':
     worm = Worm()
-    if False:
+    if True:
         worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
         worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
         worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
@@ -269,5 +248,6 @@ if __name__ == '__main__':
         worm.nameSearch("万界点名册")
         worm.nameSearch("我绑架了时间线")
         worm.nameSearch("手术直播间")
+        worm.nameSearch("无限先知")
     webManager().update_from_local_append(worm.ogs)
     worm.output(append=True)
