@@ -31,20 +31,20 @@ class Worm:
         }
         return headers
 
-    def handle_request(self, url, max_retry_time=10):
+    def handle_request(self, url, max_retry_time, timeout):
         try: 
-            respon = requests.get(url=url, headers=self.header(), timeout=1)
+            respon = requests.get(url=url, headers=self.header(), timeout=timeout)
             if respon.content is None: raise Exception(f"respon content is None max_retry_time:{max_retry_time}")
         except Exception as e:
             if max_retry_time >= 0:
                 print(f"Retry due to {e}")
                 time.sleep(1)
-                respon = self.handle_request(url, max_retry_time - 1)
+                respon = self.handle_request(url, max_retry_time - 1, timeout)
             else:
                 raise ConnectionRefusedError(f"Retried too many times!!! Server refuse connection.\n{e}")
         return respon
-    def open_url(self, url, max_retry_time=10):
-        return self.handle_request(url, max_retry_time).content.decode()
+    def open_url(self, url, max_retry_time=10, timeout=1):
+        return self.handle_request(url, max_retry_time, timeout).content.decode()
 
 # ________________________________________________________________________________________________________________________________
     def autoSearchAltsite(self, novelName):
@@ -114,8 +114,8 @@ class Worm:
         get info from qidian.com substract from standard header
         :param url: book url(qidian.com)
         :return: return bookinfo if append is False else add info to self.ogs list
-        """
-        content = self.BS(self.open_url(url))
+        """ 
+        content = self.BS(self.open_url(url, max_retry_time=20, timeout=10))
         og = {
             "url":url,
             "type":content.find("meta", {"property":"og:type"})["content"],
@@ -285,6 +285,7 @@ if __name__ == '__main__':
         worm.nameSearch_Thread("万界点名册")
         worm.nameSearch_Thread("我绑架了时间线")
         worm.nameSearch_Thread("手术直播间")
-    worm.nameSearch_Thread("无限先知")
+        worm.nameSearch_Thread("无限先知")
+    for t in worm.threadPool:t.join() # wait for all thread join
     webManager().update_from_local_append(worm.ogs)
     worm.output(append=True)
