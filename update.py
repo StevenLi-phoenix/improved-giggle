@@ -1,10 +1,6 @@
 import json, random, time
-from tabnanny import check
-from re import S, search
-from tokenize import String
 import requests
 from bs4 import BeautifulSoup as BS
-from sklearn.feature_selection import SelectKBest
 
 
 
@@ -48,10 +44,10 @@ class Worm:
 
 # ________________________________________________________________________________________________________________________________
     def autoSearchAltsite(self, novelName):
-        altsite = self.searchMethod1(novelName)
-        if altsite!="-1": return altsite
-        altsite = self.searchMethod2(novelName)
-        if altsite!="-1": return altsite
+        methods = [self.searchMethod1, self.searchMethod2, self.searchMethod3]
+        for method in methods:
+            altsite = method(novelName)
+            if altsite!="-1": return altsite
         print("Alt search failed")
         return "autoSearchFailed"
         
@@ -78,6 +74,22 @@ class Worm:
             for re in result:
                 if re["mu"] is not "null":
                     altsite = re["mu"]
+                    break
+            return altsite
+        except Exception as e:
+            return altsite
+    
+    def searchMethod3(self, novelName):
+        print("Altsit 3")
+        altsite = "-1"
+        base = "https://cn.bing.com"
+        request_url = f"https://cn.bing.com/search?q={novelName}"
+        respon = self.open_url(request_url)
+        try:
+            result = self.BS(respon).find_all("div", attrs={"li":"b_algo"})
+            for re in result:
+                if (re.div.a["href"] is not "null") and ("qidian" not in re.div.a["href"]):
+                    altsite = re.div.a["href"]
                     break
             return altsite
         except Exception as e:
@@ -199,6 +211,8 @@ class webManager:
                     链接：<br>
                     <a href="{og["novel:read_url"]}"><button>{og["url"].split("/")[2]}</button></a>
                     <a href="{og["altsite"]}"><button>{og["altsite"]}</button></a>
+                    <a href="https://www.google.com/search?q={og["title"]}" target="_blank"><button>search {og["title"]}</button></a>
+                    
                     </div>
                 </td>
                 </tr>"""
@@ -218,7 +232,7 @@ class subpages:
 
 if __name__ == '__main__':
     worm = Worm()
-    if True:
+    if False:
         worm.infoPage("https://book.qidian.com/info/1009480992/", altsite="https://www.biqugee.com/book/18461/") #超神机械师
         worm.infoPage("https://book.qidian.com/info/1021617576/", altsite="https://www.ddyueshu.com/27171_27171574/") #夜的命名术
         worm.infoPage("https://book.qidian.com/info/1029006481/", altsite="https://www.biqugee.com/book/49472/") #不科学御兽
@@ -248,6 +262,6 @@ if __name__ == '__main__':
         worm.nameSearch("万界点名册")
         worm.nameSearch("我绑架了时间线")
         worm.nameSearch("手术直播间")
-        worm.nameSearch("无限先知")
+    worm.nameSearch("无限先知")
     webManager().update_from_local_append(worm.ogs)
     worm.output(append=True)
